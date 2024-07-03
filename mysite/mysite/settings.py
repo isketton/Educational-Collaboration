@@ -11,7 +11,8 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
-import os
+from decouple import config
+import os, sys
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -22,10 +23,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
+SECRET_KEY = config('DJANGO_SECRET_KEY')
+DEBUG = config('DJANGO_DEBUG', default=False, cast=bool)
+WEB_HOST = config('DJANGO_WEB_HOST', default='localhost')
+DB_HOST = config('DJANGO_DB_HOST', default='localhost')
+DB_NAME = config('DJANGO_DB_NAME')
+POSTGRES_USER = config('POSTGRES_USER')
+POSTGRES_PASSWORD = config('POSTGRES_PASSWORD')
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+if not SECRET_KEY:
+    print("A secret key need to be set as an environment variable") #or in /etc/secret_key.txt
+    sys.exit(1) 
 
 ALLOWED_HOSTS = []
 
@@ -132,3 +140,9 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+
+DB_HOST = config('DJANGO_DB_HOST', default='localhost')
+POSTGRES_HOST = config('POSTGRES_HOST')
+POSTGRES_PASSWORD = config('POSTGRES_PASSWORD')
