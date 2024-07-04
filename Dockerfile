@@ -1,9 +1,8 @@
-FROM python:3.10.4-slim-bullseye
+FROM python:3.12-slim-bullseye
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 RUN apt-get update \
-    && apt-get -y install libpq-dev gcc \
-    && pip install psycopg2
+    && apt-get -y install libpq-dev gcc 
 RUN mkdir /code
 WORKDIR /code
 ADD requirements.txt /code/
