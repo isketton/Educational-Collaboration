@@ -1,25 +1,16 @@
+from typing import List
+def change(amount: int, coins: List[int]) -> int:
+	dp = [0] * (amount + 1)
+	dp[0] = 1
+	for i in range(len(coins) - 1, -1, -1):
+		nextDP = [0] * (amount + 1)
+		nextDP[0] = 1
+		
+		for a in range(1, amount + 1):
+			nextDP[a] = dp[a]
+			if a - coins[i] >= 0:
+				nextDP[a] += nextDP[a - coins[i]]
+		dp = nextDP
+	return dp[amount]
 
-class Interval(object):
-    def __init__(self, start, end):
-        self.start = start
-        self.end = end
-
-
-def minMeetingRooms(intervals):
-	start = sorted([i.start for i in intervals])
-	end = sorted([i.end for i in intervals])
-	
-	res, count = 0, 0
-	s, e = 0, 0
-	while s < len(intervals):
-		if start[s] < end[e]:
-			s += 1
-			count += 1
-		else:
-			e += 1
-			count -= 1 
-		res = max(res, count)
-	return res
-
-intervals = [Interval(0, 30), Interval(5, 10), Interval(15, 20)]
-print(minMeetingRooms(intervals))
+print(change(5, [1,2,5]))

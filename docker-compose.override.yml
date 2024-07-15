@@ -43,3 +43,14 @@ services:
       - "8080:80"
     networks:
       - backend
+
+  asgiserver:
+    ports: 
+      - "9000:9000"
+    volumes:
+      - ./mysite:/code
+
+  frontend:
+    ports: 
+      - "8002:8002"
+    
