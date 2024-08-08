@@ -1,11 +1,22 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from rest_framework import generics, status
+from rest_framework import generics, authentication, permissions
+from rest_framework.settings import api_settings
+from rest_framework.authtoken.serializers import AuthTokenSerializer
 from rest_framework.response import Response
 from .models import *
 from .serializers import *
+from django.contrib.auth import authenticate
+from django.contrib.auth import login
+from knox.views import LoginView as KnoxLoginView
+from knox.auth import TokenAuthentication
+from rest_framework.authentication import SessionAuthentication
+
 # Create your views here.
 
+class UserListCreate(generics.ListCreateAPIView):
+    queryset = CustomUser.objects.all()
+    serializer_class = UserSerializer
 class StaffListCreate(generics.ListCreateAPIView):
     queryset = Staff.objects.all()
     serializer_class = StaffSerializer
@@ -109,7 +120,7 @@ class ClubRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
   queryset = Clubs.objects.all()
   serializer_class = ClubSerializer
   lookup_field = "pk"
-  
+'''  
 class MessageListCreate(generics.ListCreateAPIView):
     queryset = Messages.objects.all()
     serializer_class = MessageSerializer
@@ -121,7 +132,7 @@ class MessageListCreate(generics.ListCreateAPIView):
 class MessageRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
   queryset = Messages.objects.all()
   serializer_class = MessageSerializer
-  lookup_field = "pk"
+  lookup_field = "pk"'''
   
 class SchoolListCreate(generics.ListCreateAPIView):
     queryset = Schools.objects.all()
@@ -135,6 +146,48 @@ class SchoolRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
   queryset = Schools.objects.all()
   serializer_class = SchoolSerializer
   lookup_field = "pk"
+  
+class CreateUserView(generics.CreateAPIView):
+    serializer_class = UserSerializer
+    
+class CreateStudentView(generics.CreateAPIView):
+    serializer_class = StudentSerializer
+
+class CreateParentView(generics.CreateAPIView):
+    serializer_class = ParentSerializer
+
+class CreateStaffView(generics.CreateAPIView):
+    serializer_class = StaffSerializer
+class LoginView(KnoxLoginView):
+    serializer_class = AuthSerializer
+    permission_classes = (permissions.AllowAny,)
+    
+    def post(self, request, format=None):
+        serializer = AuthTokenSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        login(request, user)
+        response =  super(LoginView, self).post(request, format=None)
+
+        token = response.data['token']
+        del response.data['token']
+        
+        response.set_cookie(
+            'auth_token',
+            token,
+            httponly=True,
+            samesite='strict'
+        )
+        return response
+      
+class ManageUserView(generics.RetrieveUpdateAPIView): 
+    serializer_class = UserSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+    
+    def get_object(self):
+        return self.request.user
+    
+      
   
 def chat(request):
     return render(request, "chat.html")

@@ -31,7 +31,7 @@ services:
       - web
 
   db:
-    image: postgres
+    image: postgres:latest
     networks:
       - backend
 
@@ -62,11 +62,11 @@ services:
       - backend
       - redisnet
 
-  frontend:
-    build: .
-    command: npm run build  
-    depends_on:
-      - web
+  #frontend:
+   # build: .
+   #command: npm run build  
+    #depends_on:
+    #  - web
 networks:
   backend:
     driver: bridge

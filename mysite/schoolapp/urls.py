@@ -1,12 +1,22 @@
 from django.urls import path, re_path
 from . import views
 from . import chat_handler
+from knox import views as knox_views
+
 
 websocket_urlpatterns = [
     re_path(r"ws/schoolapp/(?P<room_name>\w+)/$", chat_handler.ChatUser.as_asgi()),
 ]
 
 urlpatterns = [
+    path('create/',views.CreateUserView.as_view(), name="create"),
+    path('createstudent/', views.CreateStudentView.as_view(), name='creatstudent'),
+    path('createstaff/', views.CreateStaffView.as_view(), name='creatstaff'),
+    path('createparent/', views.CreateParentView.as_view(), name='creatparent'),
+    path('profile/', views.ManageUserView.as_view(), name="profile"),
+    path('login/', views.LoginView.as_view(), name='login'),
+    path('logout/', knox_views.LogoutView.as_view(), name='logout'),
+    path('logoutall/', knox_views.LogoutAllView.as_view(), name='logoutall'),
     path("staff/", views.StaffListCreate.as_view(), name="staff-view-create"),
     path("staff/<int:pk>/", views.StaffRetrieveUpdateDestroy.as_view(), 
          name="update",),
@@ -31,12 +41,10 @@ urlpatterns = [
     path("club/", views.ClubListCreate.as_view(), name="club-view-create"),
     path("club/<int:pk>/", views.ClubRetrieveUpdateDestroy.as_view(), 
          name="update",),
-    path("message/", views.MessageListCreate.as_view(), name="message-view-create"),
-    path("message/<int:pk>/", views.MessageRetrieveUpdateDestroy.as_view(), 
-         name="update",),
     path("school/", views.SchoolListCreate.as_view(), name="school-view-create"),
     path("school/<int:pk>/", views.SchoolRetrieveUpdateDestroy.as_view(), 
          name="update",),
+    
     path("", views.chat, name="chat"),
     path("<str:room_name>/", views.room, name="room"),
 ]
