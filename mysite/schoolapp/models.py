@@ -101,7 +101,7 @@ class Staff(models.Model):
         return self.title
       
 class Parents(models.Model):
-    id = models.UUIDField(primary_key=True, default=str(uuid), editable=False)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user_id = models.OneToOneField(
       CustomUser,
       on_delete=models.CASCADE,
@@ -137,7 +137,7 @@ class Students(models.Model):
       related_name="child",
       null=True
     )
-    student_id = models.UUIDField(primary_key=True, default=str(uuid.uuid4), editable=False)
+    student_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     grade_level = models.IntegerField(choices=[(i, str(i)) for i in range(1, 13)])
     homeroom_teacher = models.ForeignKey(
       Staff,

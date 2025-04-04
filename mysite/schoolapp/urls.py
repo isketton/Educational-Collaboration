@@ -33,7 +33,7 @@ urlpatterns = [
     path("event/<int:pk>/", views.EventRetrieveUpdateDestroy.as_view(), 
          name="update",),
     path("report/", views.ReportListCreate.as_view(), name="report-view-create"),
-    path("report/<int:pk>/", views.ReportRetrieveUpdateDestroy.as_view(), 
+    path("reports/<int:pk>/", views.ReportRetrieveUpdateDestroy.as_view(), 
          name="update",),
     path("assignment/", views.AssignmentListCreate.as_view(), name="assignment-view-create"),
     path("assignment/<int:pk>/", views.AssignmentRetrieveUpdateDestroy.as_view(), 
