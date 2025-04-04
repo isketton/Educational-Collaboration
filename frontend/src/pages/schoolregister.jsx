@@ -8,19 +8,20 @@ import {
 } from '@tanstack/react-query'
 
 export default function SchoolRegister() {
-  const { mutate, isLoading, error } = useMutation(registerSchool);
-  async function registerSchool(schoolData) {
-    const response = await fetch('/school/', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json'},
-      body: JSON.stringify(userData),
-    });
-    
-    if (!response.ok) {
-      throw new Error('Registration failed');
+
+  const {mutate, isLoading, error} = useMutation({
+    queryKey: ['schoolreg'], 
+    queryFn: async () => {
+      // check if authtoken is null, if so in backend return 404
+      return axios.get('http://localhost:8001/schoolapp/school/', {withCredentials: true});
     }
-  
-    return await response.json();
+  });
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>An error has occurred: {error.message}</div>;
   }
 
   async function handleSubmit(event) {

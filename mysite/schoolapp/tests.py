@@ -2,6 +2,7 @@ from django.test import TestCase
 
 # Create your tests here. 
 from autobahn.asyncio.wamp import connect
+import asyncio
 
 async def test_ws_server(uri):
     async def onopen(session):

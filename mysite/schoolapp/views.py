@@ -7,11 +7,13 @@ from rest_framework.response import Response
 from .models import *
 from .serializers import *
 from django.contrib.auth import authenticate
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
 from knox.views import LoginView as KnoxLoginView
+from knox.views import LogoutView as KnoxLogoutView
 from knox.auth import TokenAuthentication
 from rest_framework.authentication import SessionAuthentication
-
+from rest_framework.permissions import IsAuthenticated
+from .utility import TokenAuthSupportCookie
 # Create your views here.
 
 class UserListCreate(generics.ListCreateAPIView):
@@ -83,6 +85,7 @@ class EventRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
   lookup_field = "pk"
   
 class ReportListCreate(generics.ListCreateAPIView):
+    permission_classes = (IsAuthenticated,)
     queryset = Report.objects.all()
     serializer_class = ReportSerializer
     
@@ -90,7 +93,9 @@ class ReportListCreate(generics.ListCreateAPIView):
         Report.objects.all().delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
     
-class ReportRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
+class ReportRetrieveUpdateDestroy(generics.RetrieveAPIView):
+  permission_classes = (IsAuthenticated,)
+  
   queryset = Report.objects.all()
   serializer_class = ReportSerializer
   lookup_field = "pk"
@@ -179,6 +184,12 @@ class LoginView(KnoxLoginView):
             samesite='strict'
         )
         return response
+      
+class LogoutView(KnoxLogoutView):
+    permission_classes = (IsAuthenticated,)
+    def post(self, request):
+      token = request.COOKIES.get('auth_token')
+      
       
 class ManageUserView(generics.RetrieveUpdateAPIView): 
     serializer_class = UserSerializer
